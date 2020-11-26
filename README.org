@@ -1,0 +1,16 @@
+#+Title:  Study of *Software Foundations*
+#+Author: Ireina
+
+Study notes of Software Foundations
+
+- References:
+  + [[https://softwarefoundations.cis.upenn.edu/][Software Foundations book]]
+
+** Structure
+The book includes 4 parts:
+
+1. Logical Foundations =(src/lf)=
+2. Programming Language Foundations =(src/plf)=
+3. Verified Functional Algorithms
+4. QuickChick
+5. Verifiable C
