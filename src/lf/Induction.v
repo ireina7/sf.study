@@ -554,9 +554,11 @@ Theorem mult_succ : forall m n : nat,
 Proof.
   intros m n.
   induction m as [| m' IHm'].
-  reflexivity.
-  simpl.
-  rewrite -> IHm'. rewrite -> plus_swap. reflexivity.
+  - reflexivity.
+  - simpl.
+    rewrite -> IHm'.
+    rewrite -> plus_swap.
+    reflexivity.
 Qed.
 
 Theorem mult_comm : forall m n : nat,
@@ -565,8 +567,10 @@ Proof.
   intros n m.
   induction n.
   - simpl. rewrite -> mult_0_r. reflexivity.
-  - simpl. rewrite -> IHn.
-    rewrite -> mult_succ. reflexivity.
+  - simpl.
+    rewrite -> IHn.
+    rewrite -> mult_succ.
+    reflexivity.
 Qed.
 (** [] *)
 
