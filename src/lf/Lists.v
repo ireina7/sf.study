@@ -874,17 +874,48 @@ Search (?x + ?y = ?y + ?x).
 Theorem app_nil_r : forall l : natlist,
   l ++ [] = l.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros l.
+  induction l as [| x xs IHx].
+  - (* l = nil *)
+    reflexivity.
+  - (* l = x :: xs *)
+    simpl.
+    rewrite -> IHx.
+    reflexivity.
+ Qed.
+
 
 Theorem rev_app_distr: forall l1 l2 : natlist,
   rev (l1 ++ l2) = rev l2 ++ rev l1.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros l1 l2.
+  induction l1 as [| x xs IHx].
+  - (* l1 = nil *)
+    simpl.
+    rewrite -> app_nil_r.
+    reflexivity.
+  - (* l1 = x :: xs *)
+    simpl.
+    rewrite -> IHx.
+    rewrite -> app_assoc.
+    reflexivity.
+Qed.
+
 
 Theorem rev_involutive : forall l : natlist,
   rev (rev l) = l.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros l.
+  induction l as [| x xs IHx].
+  - simpl. reflexivity.
+  - (* l = x :: xs *)
+    simpl.
+    rewrite -> rev_app_distr.
+    rewrite -> IHx.
+    simpl.
+    reflexivity.
+ Qed.
+
 
 (** There is a short solution to the next one.  If you find yourself
     getting tangled up, step back and try to look for a simpler
@@ -893,14 +924,36 @@ Proof.
 Theorem app_assoc4 : forall l1 l2 l3 l4 : natlist,
   l1 ++ (l2 ++ (l3 ++ l4)) = ((l1 ++ l2) ++ l3) ++ l4.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros l1 l2 l3 l4.
+  assert (H: l2 ++ (l3 ++ l4) = (l2 ++ l3) ++ l4). {
+    rewrite -> app_assoc.
+    reflexivity.
+  }
+  induction l1 as [| x xs IHx].
+  - simpl. apply H.
+  - (* l1 = x :: xs *)
+    simpl.
+    rewrite -> IHx.
+    reflexivity.
+Qed.
+
 
 (** An exercise about your implementation of [nonzeros]: *)
 
 Lemma nonzeros_app : forall l1 l2 : natlist,
   nonzeros (l1 ++ l2) = (nonzeros l1) ++ (nonzeros l2).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros l1 l2.
+  induction l1 as [| x xs IHx].
+  - simpl. reflexivity.
+  - (* l1 = x :: xs *)
+    destruct x as [| n].
+    + simpl. apply IHx.
+    + (* x = S n *)
+      simpl.
+      rewrite -> IHx.
+      reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard (eqblist) 
@@ -909,25 +962,54 @@ Proof.
     lists of numbers for equality.  Prove that [eqblist l l]
     yields [true] for every list [l]. *)
 
-Fixpoint eqblist (l1 l2 : natlist) : bool
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+Fixpoint eqblist (l1 l2 : natlist) : bool :=
+  match l1 with
+  | nil => match l2 with
+           | nil => true
+           | _ => false
+           end
+  | x :: xs => match l2 with
+               | nil => false
+               | y :: ys => match x =? y with
+                            | true => eqblist xs ys
+                            | false => false
+                            end
+               end
+  end.
+
 
 Example test_eqblist1 :
   (eqblist nil nil = true).
- (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 
 Example test_eqblist2 :
   eqblist [1;2;3] [1;2;3] = true.
-(* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 
 Example test_eqblist3 :
   eqblist [1;2;3] [1;2;4] = false.
- (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
+
+Theorem eqb_nat_refl : forall n : nat,
+  true = (n =? n).
+Proof.
+  intros n. induction n.
+  - reflexivity.
+  - simpl. rewrite <- IHn. reflexivity.
+Qed.
 
 Theorem eqblist_refl : forall l:natlist,
   true = eqblist l l.
-Proof.
-  (* FILL IN HERE *) Admitted.
+Proof. intros l. simpl.
+       induction l as [| x xs IHx].
+       - reflexivity.
+       - simpl. rewrite <- IHx.
+         assert (H: x = x). {
+           reflexivity.
+         }
+         rewrite <- eqb_nat_refl.
+         reflexivity.
+       Qed.
 (** [] *)
 
 (* ================================================================= *)
@@ -940,7 +1022,10 @@ Proof.
 Theorem count_member_nonzero : forall (s : bag),
   1 <=? (count 1 (1 :: s)) = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros s.
+  simpl.
+  reflexivity.
+Qed.
 (** [] *)
 
 (** The following lemma about [leb] might help you in the next exercise. *)
@@ -960,7 +1045,17 @@ Proof.
 Theorem remove_does_not_increase_count: forall (s : bag),
   (count 0 (remove_one 0 s)) <=? (count 0 s) = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros s.
+  induction s as [| x xs IHx].
+  - simpl. reflexivity.
+  - (* s = x :: xs *)
+    simpl.
+    destruct x as [| n].
+    + simpl. apply leb_n_Sn.
+    + (* x = S n *)
+      simpl.
+      apply IHx.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, standard, optional (bag_count_sum) 
@@ -1070,17 +1165,21 @@ Definition option_elim (d : nat) (o : natoption) : nat :=
     Using the same idea, fix the [hd] function from earlier so we don't
     have to pass a default element for the [nil] case.  *)
 
-Definition hd_error (l : natlist) : natoption
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+Definition hd_error (l : natlist) : natoption :=
+  match l with
+  | nil => None
+  | x :: xs => Some x
+  end.
+
 
 Example test_hd_error1 : hd_error [] = None.
- (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 
 Example test_hd_error2 : hd_error [1] = Some 1.
- (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 
 Example test_hd_error3 : hd_error [5;6] = Some 5.
- (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 
 (** [] *)
 
