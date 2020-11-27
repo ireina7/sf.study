@@ -9,8 +9,8 @@ Study notes of Software Foundations
 ** Structure
 The book includes 4 parts:
 
-1. Logical Foundations =(src/lf)=
-2. Programming Language Foundations =(src/plf)=
-3. Verified Functional Algorithms
-4. QuickChick
-5. Verifiable C
+- [[https://softwarefoundations.cis.upenn.edu/lf-current/index.html][Logical Foundations]] =(src/lf)=
+- [[https://softwarefoundations.cis.upenn.edu/plf-current/index.html][Programming Language Foundations]] =(src/plf)=
+- [[https://softwarefoundations.cis.upenn.edu/vfa-current/index.html][Verified Functional Algorithms]] =(src/vfa)=
+- [[https://softwarefoundations.cis.upenn.edu/qc-current/index.html][QuickChick]] =(src/qc)=
+- [[https://softwarefoundations.cis.upenn.edu/vc-current/index.html][Verifiable C]] =(src/vc)=
