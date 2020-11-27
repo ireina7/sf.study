@@ -1228,7 +1228,7 @@ Proof. reflexivity. Qed.
 
 (** Multiplication: *)
 Definition mult (n m : cnat) : cnat :=
-  fun X f x => n X (m X f) x.
+  fun X f => n X (m X f).
 
 Example mult_1 : mult one one = one.
 Proof. reflexivity. Qed.
@@ -1250,17 +1250,16 @@ Proof. reflexivity. Qed.
     type.  Iterating over [cnat] itself is usually problematic.) *)
 
 Definition exp (n m : cnat) : cnat :=
-  fun X f => m X (mult n m X f).
+  fun X => m (X -> X) (n X).
 
 Example exp_1 : exp two two = plus two two.
 Proof. reflexivity. Qed.
 
 Example exp_2 : exp three zero = one.
-Proof. (* FILL IN HERE *) Admitted.
+Proof. reflexivity. Qed.
 
 Example exp_3 : exp three two = plus (mult two (mult two two)) one.
-Proof. (* FILL IN HERE *) Admitted.
-
+Proof. reflexivity. Qed.
 (** [] *)
 
 End Church.
