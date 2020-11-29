@@ -148,7 +148,17 @@ Qed.
 Example and_exercise :
   forall n m : nat, n + m = 0 -> n = 0 /\ m = 0.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m eq.
+  split.
+  - destruct n as [| n'] eqn:En.
+    + reflexivity.
+    + discriminate.
+  - destruct m as [| m'] eqn:Em.
+    + reflexivity.
+    + rewrite -> PeanoNat.Nat.add_succ_r in eq.
+      simpl.
+      discriminate.
+Qed.
 (** [] *)
 
 (** So much for proving conjunctive statements.  To go in the other
@@ -226,7 +236,9 @@ Proof.
 Lemma proj2 : forall P Q : Prop,
   P /\ Q -> Q.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P Q [_ HQ].
+  apply HQ.
+Qed.
 (** [] *)
 
 (** Finally, we sometimes need to rearrange the order of conjunctions
@@ -253,7 +265,11 @@ Theorem and_assoc : forall P Q R : Prop,
   P /\ (Q /\ R) -> (P /\ Q) /\ R.
 Proof.
   intros P Q R [HP [HQ HR]].
-  (* FILL IN HERE *) Admitted.
+  split.
+  - apply and_intro.
+    apply HP. apply HQ.
+  - apply HR.
+Qed.
 (** [] *)
 
 (** By the way, the infix notation [/\] is actually just syntactic
@@ -317,14 +333,25 @@ Qed.
 Lemma mult_eq_0 :
   forall n m, n * m = 0 -> n = 0 \/ m = 0.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros [| n'] m eq.
+  - left. reflexivity.
+  - simpl in eq.
+    apply and_exercise in eq.
+    destruct eq as [H1 H2].
+    right. apply H1.
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, standard (or_commut)  *)
 Theorem or_commut : forall P Q : Prop,
   P \/ Q  -> Q \/ P.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P Q.
+  intros eq.
+  destruct eq as [p | q].
+  - right. apply p.
+  - left. apply q.
+Qed.
 (** [] *)
 
 (* ================================================================= *)

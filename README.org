@@ -2,6 +2,10 @@
 #+Author: Ireina
 
 Study notes of Software Foundations
+#+BEGIN_QUOTE
+Ex Falso Quodlibet.
+- From falsehood follows whatever you like.
+#+END_QUOTE
 
 - References:
   + [[https://softwarefoundations.cis.upenn.edu/][Software Foundations book]]
