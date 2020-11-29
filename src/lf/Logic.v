@@ -404,10 +404,25 @@ Proof.
     Show that Coq's definition of negation implies the intuitive one
     mentioned above: *)
 
-Fact not_implies_our_not : forall (P:Prop),
-  ~ P -> (forall (Q:Prop), P -> Q).
+(*
+ * @Author: Ireina
+ * @Date: <2020-11-29 Sun>
+ *
+ * My question here:
+ * I found _False's_ definition in coq's doc which is:
+ * Inductive False := .
+ * Superisingly, the definition of False is nothing!
+ * So what happens when I destruct False?
+ * What happens when I destruct an implication?
+ *)
+Fact not_implies_our_not : forall (P : Prop),
+  ~ P -> (forall (Q : Prop), P -> Q).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros p HP Q HQ.
+  unfold not in HP.
+  apply HP in HQ.
+  destruct HQ.
+Qed.
 (** [] *)
 
 (** Inequality is a frequent enough example of negated statement
@@ -476,14 +491,29 @@ Definition manual_grade_for_double_neg_inf : option (nat*string) := None.
 Theorem contrapositive : forall (P Q : Prop),
   (P -> Q) -> (~Q -> ~P).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P Q.
+  intros implication.
+  intros HQ.
+  unfold not.
+  unfold not in HQ.
+  intros HP.
+  apply HQ.
+  apply implication.
+  apply HP.
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, standard (not_both_true_and_false)  *)
 Theorem not_both_true_and_false : forall P : Prop,
   ~ (P /\ ~P).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P.
+  unfold not.
+  intros HPP.
+  destruct HPP as [HP HP'].
+  apply HP'.
+  apply HP.
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, advanced (informal_not_PNP) 
@@ -595,19 +625,36 @@ Qed.
 Theorem iff_refl : forall P : Prop,
   P <-> P.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P.
+  split.
+  - intros HP. apply HP.
+  - intros HP. apply HP.
+Qed.
 
 Theorem iff_trans : forall P Q R : Prop,
   (P <-> Q) -> (Q <-> R) -> (P <-> R).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P Q R.
+  intros HPQ HQR.
+  destruct HPQ as [PQ QP].
+  destruct HQR as [QR RQ].
+  unfold iff.
+  split.
+  - intros HP. apply QR. apply PQ. apply HP.
+  - intros HR. apply QP. apply RQ. apply HR.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, standard (or_distributes_over_and)  *)
 Theorem or_distributes_over_and : forall P Q R : Prop,
   P \/ (Q /\ R) <-> (P \/ Q) /\ (P \/ R).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros P Q R.
+  unfold iff.
+  split.
+  - intros H.
+    split.
+    Abort.
 (** [] *)
 
 (* ================================================================= *)
