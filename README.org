@@ -5,6 +5,9 @@ Study notes of Software Foundations
 #+BEGIN_QUOTE
 Ex Falso Quodlibet.
 - From falsehood follows whatever you like.
+
+Algorithms are the computational content of proofs. -- Robert Harper
+
 #+END_QUOTE
 
 - References:
