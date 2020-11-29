@@ -645,8 +645,30 @@ Proof.
 Qed.
 (** [] *)
 
-(** **** Exercise: 3 stars, standard (or_distributes_over_and)  *)
+
+
 Theorem or_distributes_over_and : forall P Q R : Prop,
+  P \/ (Q /\ R) <-> (P \/ Q) /\ (P \/ R).
+Proof.
+  intros P Q R. split.
+  - (* -> *) intros H. inversion H.
+    + split.
+      { left. apply H0. }
+      { left. apply H0. }
+    + split.
+      { apply proj1 in H0. right. apply H0. }
+      { apply proj2 in H0. right. apply H0. }
+  - (* <- *) intros H. inversion H.
+    + destruct H1.
+      { left. apply H1. }
+      { destruct H0.
+        { left. apply H0. }
+        { right. split.
+          { apply H0. }
+          { apply H1. } } }
+Qed.
+(** **** Exercise: 3 stars, standard (or_distributes_over_and)  *)
+Theorem or_distributes_over_and' : forall P Q R : Prop,
   P \/ (Q /\ R) <-> (P \/ Q) /\ (P \/ R).
 Proof.
   intros P Q R.
@@ -654,7 +676,22 @@ Proof.
   split.
   - intros H.
     split.
-    Abort.
+    + destruct H as [HP | [HQ HR]].
+      * left. apply HP.
+      * right. apply HQ.
+    + destruct H as [HP | [HQ HR]].
+      * left. apply HP.
+      * right. apply HR.
+  - intros H.
+    destruct H as [HPQ HPR].
+    destruct HPQ.
+    + left. apply H.
+    + destruct HPR.
+      * left. apply H0.
+      * right. split.
+        apply H.
+        apply H0.
+Qed.
 (** [] *)
 
 (* ================================================================= *)
@@ -774,7 +811,12 @@ Proof.
 Theorem dist_not_exists : forall (X:Type) (P : X -> Prop),
   (forall x, P x) -> ~ (exists x, ~ P x).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros X P HPx falso.
+  destruct falso as [x Px].
+  unfold not in Px.
+  apply Px.
+  apply HPx.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard (dist_exists_or) 
@@ -785,7 +827,14 @@ Proof.
 Theorem dist_exists_or : forall (X:Type) (P Q : X -> Prop),
   (exists x, P x \/ Q x) <-> (exists x, P x) \/ (exists x, Q x).
 Proof.
-   (* FILL IN HERE *) Admitted.
+  intros X P Q. split.
+  - (* -> *) intros H. destruct H as [x PQx]. destruct PQx as [Px | Qx].
+    + left. exists x. apply Px.
+    + right. exists x. apply Qx.
+  - (* <- *) intros H. destruct H as [HP | HQ].
+    + destruct HP as [x Px]. exists x. left. apply Px.
+    + destruct HQ as [x Qx]. exists x. right. apply Qx.
+Qed.
 (** [] *)
 
 (* ################################################################# *)
@@ -870,6 +919,7 @@ Theorem In_map_iff :
     exists x, f x = y /\ In x l.
 Proof.
   intros A B f l y. split.
+  
   (* FILL IN HERE *) Admitted.
 (** [] *)
 
