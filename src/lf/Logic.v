@@ -912,23 +912,59 @@ Qed.
     propositions _inductively_, a different technique with its own set
     of strengths and limitations. *)
 
+
 (** **** Exercise: 3 stars, standard (In_map_iff)  *)
-Theorem In_map_iff :
+Theorem In_map_iff' :
   forall (A B : Type) (f : A -> B) (l : list A) (y : B),
     In y (map f l) <->
     exists x, f x = y /\ In x l.
 Proof.
   intros A B f l y. split.
-  
-  (* FILL IN HERE *) Admitted.
+  - (* -> *) intros H. induction l as [| x xs IHx].
+    + (* l = [] *) simpl in H. simpl. destruct H.
+    + (* l = x :: xs *)
+      simpl. simpl in H. destruct H as [Hx | Hy].
+      * exists x. split.
+        { apply Hx. }
+        { left. reflexivity. }
+      * apply IHx in Hy. destruct Hy as [x' Hx].
+        exists x'. destruct Hx as [HL HR]. split.
+        { apply HL. }
+        { right. apply HR. }
+  - (* <- *) intros H. induction l as [| x xs IHx].
+    + (* l = [] *) simpl in H. destruct H as [x' [[]]]. destruct H.
+    + (* l = x :: xs *)
+      simpl. simpl in H. destruct H as [x0 H].
+      destruct H as [H0 H1]. destruct H1 as [H2 | H3].
+      * left. rewrite -> H2. apply H0.
+      * right. apply IHx. exists x0. split.
+        { apply H0. }
+        { apply H3. }
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard (In_app_iff)  *)
 Theorem In_app_iff : forall A l l' (a:A),
-  In a (l++l') <-> In a l \/ In a l'.
+  In a (l ++ l') <-> In a l \/ In a l'.
 Proof.
-  intros A l. induction l as [|a' l' IH].
-  (* FILL IN HERE *) Admitted.
+  intros A l. induction l as [|x xs IHx].
+  - (* l = [] *) intros l' a.
+    simpl. split.
+    + intros Hin. right. apply Hin.
+    + intros [falso | Hin].
+      { contradiction. }
+      { apply Hin. }
+  - (* l = x :: xs *)
+    intros l' a. simpl. split.
+    + (* -> *) intros [Hxa | Hin].
+      * left. left. apply Hxa.
+      * rewrite <- or_assoc. right.
+        apply IHx.
+        apply Hin.
+    + (* <- *) intros conds. rewrite <- or_assoc in conds. destruct conds as [Hxa | Hin].
+      * left. apply Hxa.
+      * apply IHx in Hin. right. apply Hin.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, standard, especially useful (All) 
@@ -943,14 +979,21 @@ Proof.
     lemma below.  (Of course, your definition should _not_ just
     restate the left-hand side of [All_In].) *)
 
-Fixpoint All {T : Type} (P : T -> Prop) (l : list T) : Prop
-  (* REPLACE THIS LINE WITH ":= _your_definition_ ." *). Admitted.
+Fixpoint All {T : Type} (P : T -> Prop) (l : list T) : Prop :=
+  match l with
+  | [] => False
+  | x :: xs => P x /\ All P xs
+  end.
+
 
 Theorem All_In :
   forall T (P : T -> Prop) (l : list T),
     (forall x, In x l -> P x) <->
     All P l.
 Proof.
+  intros T P. induction l as [| x xs IHx].
+  - (* l = [] *) split.
+    + (* -> *) intros H. simpl in H. simpl.
   (* FILL IN HERE *) Admitted.
 (** [] *)
 
