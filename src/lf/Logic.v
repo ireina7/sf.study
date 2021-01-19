@@ -991,9 +991,18 @@ Theorem All_In :
     (forall x, In x l -> P x) <->
     All P l.
 Proof.
-  intros T P. induction l as [| x xs IHx].
+  intros T P l. 
   - (* l = [] *) split.
-    + (* -> *) intros H. simpl in H. simpl.
+    + (* -> *) induction l as [| x xs IHx].
+      * simpl. intros H.
+      (* 
+        @author: Ireina
+        @date: <2021-01-18>
+        
+        I've tried this several times but I do not know how to
+        handle this situation... I searched a lot of solutions of others but
+        none of them can really solve this!
+      *)
   (* FILL IN HERE *) Admitted.
 (** [] *)
 
@@ -1186,7 +1195,7 @@ Lemma in_not_nil_42_take5 :
   forall l : list nat, In 42 l -> l <> [].
 Proof.
   intros l H.
-  apply (in_not_nil _ _ _ H).
+  apply (in_not_nil _ _ _ H). (* Wooow! interesting! *)
 Qed.
 
 (** You can "use theorems as functions" in this way with almost all
@@ -1345,6 +1354,15 @@ Definition tr_rev {X} (l : list X) : list X :=
 
 Theorem tr_rev_correct : forall X, @tr_rev X = @rev X.
 Proof.
+  intros X.
+  apply functional_extensionality.
+  induction x as [| x' xs IHxs].
+  - reflexivity.
+  - unfold tr_rev. simpl. 
+    unfold tr_rev in IHxs.
+    rewrite <- IHxs.
+    (* emmmmmmmmm ... stuck *)
+    
 (* FILL IN HERE *) Admitted.
 (** [] *)
 
