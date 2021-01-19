@@ -175,7 +175,7 @@ Proof.
     an instantiation for [m]: we have to supply one explicitly by
     adding "[with (m:=[c,d])]" to the invocation of [apply]. *)
 
-  apply trans_eq with (m:=[c;d]).
+  apply trans_eq with (m := [c;d]).
   apply eq1. apply eq2.   Qed.
 
 (** (Actually, we usually don't have to include the name [m] in
@@ -503,7 +503,7 @@ Proof.
     + (* m = S m' *) discriminate eq.
   - (* n = S n' *) intros eq. destruct m as [| m'] eqn:E.
     + (* m = O *) discriminate eq.
-    + (* m = S m' *) apply f_equal.
+    + (* m = S m' *) apply f_equal. unfold double in eq. injection eq. simpl.
 
 (** At this point, the induction hypothesis ([IHn']) does _not_ give us
     [n' = m'] -- there is an extra [S] in the way -- so the goal is
@@ -1060,7 +1060,19 @@ Theorem bool_fn_applied_thrice :
   forall (f : bool -> bool) (b : bool),
   f (f (f b)) = f b.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros f b.
+  destruct b as [|].
+  - (* b = true *) destruct (f true) eqn:HFtrue.
+    + (* f true = true *) rewrite HFtrue. apply HFtrue.
+    + (* f true = false *) destruct (f false) eqn: HFfalse.
+      * apply HFtrue.
+      * apply HFfalse.
+  - (* b = false *) destruct (f false) eqn:HFfalse.
+    + (* f false = true *) destruct (f true) eqn:HFtrue.
+      * apply HFtrue.
+      * apply HFfalse.
+    + (* f false = false *) rewrite HFfalse. apply HFfalse.
+Qed.
 (** [] *)
 
 (* ################################################################# *)
