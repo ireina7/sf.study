@@ -389,7 +389,7 @@ Example discriminate_ex3 :
     x = z.
 Proof.
   intros X x y z l j contra.
-  discriminate.
+  discriminate contra.
 Qed.
 (** [] *)
 
@@ -1153,7 +1153,14 @@ Qed.
 Theorem eqb_sym : forall (n m : nat),
   (n =? m) = (m =? n).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  induction n as [|n' IHn'].
+  - induction m as [| m' IHm'].
+    + reflexivity.
+    + simpl. reflexivity.
+  - induction m as [| m' IHm'].
+    + simpl. reflexivity.
+    + simpl. apply IHn'.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced, optional (eqb_sym_informal) 
@@ -1169,12 +1176,45 @@ Proof.
     [] *)
 
 (** **** Exercise: 3 stars, standard, optional (eqb_trans)  *)
+
+Theorem eqb_eq : forall n m : nat,
+  n =? m = true <-> n = m.
+Proof.
+  - split.
+    + generalize dependent m. 
+      generalize dependent n. 
+      induction n as [| n' IHn'].
+      * induction m as [| m' IHm'].
+        { simpl. intros ok. reflexivity. }
+        { intros H. discriminate. }
+      * induction m as [| m' IHm'].
+        { intros H. discriminate. }
+        { intros H. f_equal. apply IHn' in H. apply H. }
+    + generalize dependent m. 
+      generalize dependent n. 
+      induction n as [| n' IHn'].
+        * induction m as [| m' IHm'].
+          { simpl. intros ok. reflexivity. }
+          { intros H. discriminate. }
+        * induction m as [| m' IHm'].
+          { intros H.  discriminate. }
+          { intros H. apply IHn'. injection H as Hnm. apply Hnm. }
+Qed.
+
 Theorem eqb_trans : forall n m p,
   n =? m = true ->
   m =? p = true ->
   n =? p = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m p.
+  intros eq1 eq2.
+  apply eqb_eq in eq1.
+  apply eqb_eq in eq2.
+  apply eqb_eq.
+  transitivity m.
+  - apply eq1.
+  - apply eq2.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (split_combine) 
