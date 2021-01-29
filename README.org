@@ -14,7 +14,7 @@ Study notes of Software Foundations
   + [[https://softwarefoundations.cis.upenn.edu/][Software Foundations book]]
 
 ** Structure
-The book includes 4 parts:
+The book includes 5 parts:
 
 - [[https://softwarefoundations.cis.upenn.edu/lf-current/index.html][Logical Foundations]] =(src/lf)=
 - [[https://softwarefoundations.cis.upenn.edu/plf-current/index.html][Programming Language Foundations]] =(src/plf)=
