@@ -641,8 +641,9 @@ Inductive next_ev : nat -> nat -> Prop :=
     between every pair of natural numbers. *)
 
 (* FILL IN HERE
-
     [] *)
+Inductive total_relation : nat -> nat -> Prop :=
+  tr_nm : forall (n m : nat), total_relation n m.
 
 (** **** Exercise: 2 stars, standard, optional (empty_relation) 
 
@@ -652,6 +653,8 @@ Inductive next_ev : nat -> nat -> Prop :=
 (* FILL IN HERE
 
     [] *)
+Inductive empty_relation : nat -> nat -> Prop :=
+  er_nm : forall (n m : nat), n = m /\ n <> m -> empty_relation n m.
 
 (** From the definition of [le], we can sketch the behaviors of
     [destruct], [inversion], and [induction] on a hypothesis [H]
@@ -673,7 +676,10 @@ Inductive next_ev : nat -> nat -> Prop :=
 
 Lemma le_trans : forall m n o, m <= n -> n <= o -> m <= o.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros m n o Hmn Hno. induction Hno as [| n' o'].
+  - apply Hmn.
+  - apply le_S. apply IHo'.
+Qed.
 
 Theorem O_le_n : forall n,
   0 <= n.
