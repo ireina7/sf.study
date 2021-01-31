@@ -676,59 +676,86 @@ Inductive empty_relation : nat -> nat -> Prop :=
 
 Lemma le_trans : forall m n o, m <= n -> n <= o -> m <= o.
 Proof.
-  intros m n o Hmn Hno. induction Hno as [| n' o'].
+  intros m n o Hmn Hno. induction Hno as [x | n' o' IHo].
   - apply Hmn.
-  - apply le_S. apply IHo'.
+  - apply le_S. apply IHo.
 Qed.
 
 Theorem O_le_n : forall n,
   0 <= n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  induction n as [| n' IHn'].
+  - apply le_n.
+  - apply le_S. apply IHn'.
+Qed.
 
 Theorem n_le_m__Sn_le_Sm : forall n m,
   n <= m -> S n <= S m.
 Proof.
-  (* FILL IN HERE *) Admitted.
-
-Theorem Sn_le_Sm__n_le_m : forall n m,
-  S n <= S m -> n <= m.
-Proof.
-  (* FILL IN HERE *) Admitted.
-
-Theorem le_plus_l : forall a b,
-  a <= a + b.
-Proof.
-  (* FILL IN HERE *) Admitted.
-
-Theorem plus_le : forall n1 n2 m,
-  n1 + n2 <= m ->
-  n1 <= m /\ n2 <= m.
-Proof.
- (* FILL IN HERE *) Admitted.
+  intros n m H. induction H as [| n' m' IH'].
+  - apply le_n.
+  - apply le_S. apply IH'.
+Qed.
 
 (** Hint: the next one may be easiest to prove by induction on [n]. *)
+
+Lemma zero_le_n : forall n, 0 <= n.
+Proof.
+  induction n as [| n' IHn'].
+  - apply le_n.
+  - apply le_S. apply IHn'.
+Qed.
 
 Theorem add_le_cases : forall n m p q,
     n + m <= p + q -> n <= p \/ m <= q.
 Proof.
+  intros n m p q H. induction n as [| n' IHn'].
+  - simpl in H. left. apply zero_le_n.
+  - (* stuck... *)
 (* FILL IN HERE *) Admitted.
 
 Theorem lt_S : forall n m,
   n < m ->
   n < S m.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  induction n as [| n' IHn'].
+  - intros m H. apply le_S. unfold lt in H. apply H.
+  - intros m H. apply le_S. apply H.
+Qed.
+
+Lemma pred_le : forall n m, S n <= m -> n <= m.
+Proof.
+  intros n m H. induction H as [| m' Hm' IHm'].
+  - apply le_S. apply le_n.
+  - apply le_S. apply IHm'.
+Qed.
+
+Lemma le_plus_l : forall a b,
+  a <= a + b.
+Proof.
+  intros a b. induction b.
+  - rewrite <- plus_n_O. apply le_n.
+  - rewrite <- plus_n_Sm. apply le_S. assumption.
+Qed.
 
 Theorem plus_lt : forall n1 n2 m,
   n1 + n2 < m ->
   n1 < m /\ n2 < m.
 Proof.
-(* FILL IN HERE *) Admitted.
+  unfold lt. intros n1 n2 n H. split.
+  - apply (le_trans (S n1) (S (n1 + n2))).
+    + apply n_le_m__Sn_le_Sm. apply le_plus_l.
+    + assumption.
+  - apply (le_trans (S n2) (S (n1 + n2))).
+    + apply n_le_m__Sn_le_Sm. rewrite plus_comm. apply le_plus_l.
+    + assumption.
+Qed.
 
 Theorem leb_complete : forall n m,
   n <=? m = true -> n <= m.
 Proof.
+  intros n m H.
+  
   (* FILL IN HERE *) Admitted.
 
 (** Hint: The next one may be easiest to prove by induction on [m]. *)
@@ -751,7 +778,10 @@ Proof.
 Theorem leb_iff : forall n m,
   n <=? m = true <-> n <= m.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  split.
+  - apply leb_complete.
+  - apply leb_correct.
+Qed.
 (** [] *)
 
 Module R.
