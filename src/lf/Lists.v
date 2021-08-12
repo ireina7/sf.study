@@ -1223,7 +1223,13 @@ Definition eqb_id (x1 x2 : id) :=
 (** **** Exercise: 1 star, standard (eqb_id_refl)  *)
 Theorem eqb_id_refl : forall x, true = eqb_id x x.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros [n].
+  simpl.
+  induction n as [| n' IHn].
+  - reflexivity.
+  - simpl.
+    apply IHn.
+Qed.
 (** [] *)
 
 (** Now we define the type of partial maps: *)

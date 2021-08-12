@@ -503,7 +503,9 @@ Proof.
     + (* m = S m' *) discriminate eq.
   - (* n = S n' *) intros eq. destruct m as [| m'] eqn:E.
     + (* m = O *) discriminate eq.
-    + (* m = S m' *) apply f_equal. unfold double in eq. injection eq. simpl.
+    + (* m = S m' *) apply f_equal. simpl in eq. simpl in IHn'.
+      injection eq.
+      unfold double in eq. injection eq. simpl.
 
 (** At this point, the induction hypothesis ([IHn']) does _not_ give us
     [n' = m'] -- there is an extra [S] in the way -- so the goal is

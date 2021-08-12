@@ -1025,7 +1025,12 @@ Proof.
 Theorem plus_id_exercise : forall n m o : nat,
   n = m -> m = o -> n + m = m + o.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m o.
+  intros Hnm Hmo.
+  rewrite -> Hnm.
+  rewrite <- Hmo.
+  reflexivity.
+Qed.
 (** [] *)
 
 (** The [Admitted] command tells Coq that we want to skip trying
@@ -1265,7 +1270,12 @@ Qed.
 Theorem andb_true_elim2 : forall b c : bool,
   andb b c = true -> c = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros [] [].
+  - reflexivity.
+  - simpl. intros contra. destruct contra. reflexivity.
+  - simpl. intros contra. destruct contra. reflexivity.
+  - simpl. intros contra. destruct contra. reflexivity.
+Qed.
 (** [] *)
 
 (** Before closing the chapter, let's mention one final
@@ -1306,7 +1316,10 @@ Qed.
 Theorem zero_nbeq_plus_1 : forall n : nat,
   0 =? (n + 1) = false.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros [| n'].
+  - reflexivity.
+  - reflexivity.
+Qed. 
 (** [] *)
 
 (* ================================================================= *)
