@@ -982,12 +982,53 @@ Proof.
   intros l l1 l2 eq.
   generalize dependent l.
   generalize dependent l2.
+  assert (H': forall X (x: X) (ys zs: list X), 
+    ys = zs -> x :: ys = x :: zs). {
+    intros A u us vs.
+    intros us_vs.
+    rewrite -> us_vs.
+    reflexivity.
+  }
   induction l1 as [| x xs IHx].
-  - simpl. destruct l2 as [| y ys] eqn:Hy.
-    intros l eq. destruct l as [| o os].
-    + reflexivity.
-    + Abort
-  (* FILL IN HERE *) Admitted.
+  - (* l1 = [] *)
+    simpl. destruct l2 as [| y ys] eqn:Hy.
+    + (* l2 = [] *)
+      intros l eq. destruct l as [| [x y] os].
+      * reflexivity.
+      * simpl in eq.
+        destruct (split os) as [xs ys] in eq.
+        discriminate eq.
+    + (* l2 = y :: ys *)
+      intros l eq. destruct l as [| [a b] os].
+      * reflexivity.
+      * simpl in eq.
+        destruct (split os) as [ns ms] in eq.
+        discriminate eq.
+  - (* l1 = x :: xs *)
+    destruct l2 as [| y ys] eqn:Hy.
+    + (* l2 = [] *)
+      intros l eq. destruct l as [| [n m] os].
+      * simpl in eq. discriminate eq.
+      * simpl in eq.
+        destruct (split os) as [ns ms] in eq.
+        discriminate eq.
+    + (* l2 = y :: ys *)
+      intros l eq. destruct l as [| [a b] os].
+      * discriminate eq.
+      * simpl in eq.
+        destruct (split os) as [ns ms] eqn:Eos in eq.
+        injection eq.
+        intros ms_ys b_y ns_xs a_x.
+        simpl.
+        rewrite -> b_y.
+        rewrite -> a_x.
+        apply H'.
+        apply IHx.
+        rewrite -> Eos.
+        rewrite -> ms_ys.
+        rewrite -> ns_xs.
+        reflexivity.
+Qed.
 (** [] *)
 
 (** The [eqn:] part of the [destruct] tactic is optional: So far,
